@@ -1,0 +1,76 @@
+<head>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+
+<body>
+    <p>
+        Hello
+    </p>
+    <p>
+            Hello 2
+        </p>
+        <p>
+                Hello 3
+            </p>
+            <p>
+                    Hello 4
+                </p>
+                <p>
+                        Hello 5
+                    </p>
+                    <p>
+                            Hello 6
+                        </p>
+
+<script>
+
+    // selection
+    var paragraphs = document.getElementsByTagName("p")
+    for (var i = 0; i < paragraphs.length; i++) {
+        var paragraph = paragraphs.item(i);
+        paragraph.style.setProperty("color", "blue", null);
+    }
+
+    d3.selectAll("p").style("color", "red");
+
+    d3.select("body").style("background-color", "green");
+
+    // dynamic props
+
+    d3.selectAll("p").style("color", function() {
+        return "hsl(" + Math.random() * 360 + ", 100%, 50%";
+    })
+
+    d3.selectAll("p").style("color", function(d, i) {
+        console.log(d, i);
+        return i % 2 ? "#fff" : "#eee";
+    })
+
+    d3.selectAll("p")
+        .data([4, 8, 15, 16, 23, 42])
+        .style("font-size", function(d) {return d + "px"});
+
+    // enter and exit
+
+    d3.select("body")
+        .selectAll("p")
+        .data([4, 8, 15, 16, 23, 42, 22, 231, 12])
+        .enter().append("p")
+            .text(function (d) { return "I'm number " + d + "!"});
+
+    // update 
+    var p = d3.select("body")
+                .selectAll("p")
+                .data([4, 8, 15, 16, 23, 42, 22, 231, 12, 1, 1, 1])
+                .text(function (d) {return d;});
+
+    // enter 
+    p.enter().append("p")
+        .text(function (d) { return d; });
+
+    // exit
+    p.exit().remove();
+
+</script>
+
+</body>
