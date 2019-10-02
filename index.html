@@ -22,6 +22,12 @@
                             Hello 6
                         </p>
 
+<svg width="200" height="200">
+        <circle cx="25" cy="25" r="25" fill="purple" />
+        <circle cx="60" cy="60" r="25" fill="red" />
+        <circle cx="100" cy="100" r="25" fill="purple" />
+</svg>
+
 <script>
 
     // selection
@@ -71,6 +77,17 @@
     // exit
     p.exit().remove();
 
+    // transitions 
+    d3.select("body").transition()
+        .style("background-color", "yellow");
+
+    var scale = 10;
+    d3.selectAll("circle").transition()
+        .duration(750)
+        .delay(function (d, i) { 
+            return i * 1000; })
+        .attr("r", function (d) { 
+            return Math.sqrt(scale)});
 </script>
 
 </body>
