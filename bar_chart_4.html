@@ -1,0 +1,64 @@
+<svg class="chart"></svg>
+
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script>
+// var d3 = require("d3@5");
+
+margin = ({top: 20, right: 0, bottom: 30, left: 40})
+
+width  = 960
+height = 500
+
+yAxis = g => g
+    .attr("transform", `translate(${margin.left},0)`)
+    .call(d3.axisLeft(y))
+    .call(g => g.select(".domain").remove());
+
+
+xAxis = g => g
+    .attr("transform", `translate(0,${height - margin.bottom})`)
+    .call(d3.axisBottom(x).tickSizeOuter(0));
+
+var datafile = "https://gist.githubusercontent.com/mbostock/81aa27912ad9b1ed577016797a780b2c/raw/3a807eb0cbb0f5904053ac2f9edf765e2f87a2f5/alphabet.csv";
+
+data = d3.csv(datafile, 
+            ({letter, frequency}) => ({name: letter, value: +frequency})).then( 
+                function (data) {
+
+
+                    y = d3.scaleLinear()
+    .domain([0, d3.max(data, d => d.value)]).nice()
+    .range([height - margin.bottom, margin.top])
+
+x = d3.scaleBand()
+    .domain(data.map(d => d.name))
+    .range([margin.left, width - margin.right])
+    .padding(0.1)
+
+
+    
+const svg = d3.select("svg")
+      .attr("viewBox", [0, 0, width, height]);
+
+  svg.append("g")
+      .attr("fill", "steelblue")
+    .selectAll("rect")
+    .data(data)
+    .join("rect")
+      .attr("x", d => x(d.name))
+      .attr("y", d => y(d.value))
+      .attr("height", d => y(0) - y(d.value))
+      .attr("width", x.bandwidth());
+
+  svg.append("g")
+      .call(xAxis);
+
+  svg.append("g")
+      .call(yAxis);
+            } )
+
+
+
+
+
+</script>
