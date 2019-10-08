@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+
+<style>
+        @import url('https://fonts.googleapis.com/css?family=Raleway');
+        
+        body {
+          font-family: "Raleway", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+        </style>
+
 <body>
 <svg></svg>
 <script src="https://d3js.org/d3.v5.min.js"></script>
 
 <script>
 
-var nodeData = {
-    "name": "TOPICS", "children": [{
-        "name": "Topic A",
-        "children": [{"name": "Sub A1", "size": 4}, {"name": "Sub A2", "size": 4}]
-    }, {
-        "name": "Topic B",
-        "children": [{"name": "Sub B1", "size": 3}, {"name": "Sub B2", "size": 3}, {
-            "name": "Sub B3", "size": 3}]
-    }, {
-        "name": "Topic C",
-        "children": [{"name": "Sub A1", "size": 4}, {"name": "Sub A2", "size": 4}]
-    }]
-};
 
-var width = 500;  
+d3.json("sunburst_data.json").then(function(nodeData) {
+
+    // Put the code that works with our data here.
+    var width = 500;  
 var height = 500;
 var radius = Math.min(width, height) / 2;  
 var color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -52,12 +51,37 @@ var arc = d3.arc()
             .outerRadius(function (d) {  return d.y1 });
 
 
-g.selectAll('path')
+g.selectAll('g')
         .data(root.descendants())
-        .enter().append('path')
+        .enter().append('g').attr("class", "node")
+        .append('path')
         .attr("display", function (d) { return d.depth ? null : "none"; })
         .attr("d", function (d) { console.log(arc(d)); return arc(d) } )
         .style('stroke', '#fff')
         .style("fill", function (d) { return color((d.children ? d : d.parent).data.name); });
+
+function computeTextRotation(d) {
+    var angle = (d.x0 + d.x1) / Math.PI * 90;  // <-- 1
+
+    // Avoid upside-down labels
+    return (angle < 90 || angle > 270) ? angle : angle + 180;  // <--2 "labels aligned with slices"
+
+    // Alternate label formatting
+    //return (angle < 180) ? angle - 90 : angle + 90;  // <-- 3 "labels as spokes"
+}
+
+g.selectAll('.node')
+    .append('text')
+    .attr('transform', function (d) {
+        return 'translate(' + arc.centroid(d) + ')rotate(' + computeTextRotation(d) + ")"; })
+    .attr("dx", "-20")
+    .attr("dy", ".5em")
+    .text(function (d) { return d.parent ? d.data.name : ""});
+
+});
+
+
+
+
 </script>
 </body>
