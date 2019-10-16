@@ -34,17 +34,20 @@ d3.json("https://gist.githubusercontent.com/mbostock/4062045/raw/5916d145c8c048a
             .on("end", dragended);
         }
 
+        const scale = d3.scaleOrdinal(d3.schemePaired);
+            
         color = function (d) {
-            const scale = d3.scaleOrdinal(d3.schemeCategory10);
-            return d => scale(d.group);
+            return scale(d.group);
             }
 
-console.log(data)
+// console.log(data)
 height = 600;
 width = 600;
     const links = data.links.map(d => Object.create(d));
     const nodes = data.nodes.map(d => Object.create(d));
   
+  console.log(nodes)
+
     const simulation = d3.forceSimulation(nodes)
         .force("link", d3.forceLink(links).id(d => d.id))
         .force("charge", d3.forceManyBody())
